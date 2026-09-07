@@ -10,7 +10,7 @@ import { mergeSx } from '../utilities/mergeSx';
 const ComboImage = styled( 'img' )( () => ( {
   display: 'block',
   width: '100%',
-  height: '100%',
+  aspectRatio: 1,
 } ) );
 
 const ComboGlazeImage = styled( 'img' )( () => ( {
@@ -58,6 +58,7 @@ export const GlazeComboCard: React.FC<Props> = ( { combo, glazes, ...cardProps }
             <ComboImage
               src={combo.imageUrls[ 0 ]}
               loading="lazy"
+              alt={comboGlazes.map( ( g ) => g?.name ).join( ' over ' )}
             />
           </ExternalLink>
         </Box>
