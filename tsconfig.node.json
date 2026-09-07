@@ -23,6 +23,7 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
+    "scripts/**/*.ts",
     "eslint.config.js",
     "vite.config.ts"
   ]

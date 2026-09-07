@@ -67,6 +67,7 @@ export default defineConfig( [
             const: { before: false, after: true },
             let: { before: false, after: true },
             type: { before: false, after: true },
+            with: { before: true, after: true },
           },
         },
       ],
@@ -86,6 +87,18 @@ export default defineConfig( [
       '@typescript-eslint/restrict-template-expressions': [
         'error', {
           allowNumber: true,
+        },
+      ],
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        {
+          checksVoidReturn: false,
+        },
+      ],
+      '@typescript-eslint/no-confusing-void-expression': [
+        'error',
+        {
+          ignoreArrowShorthand: true,
         },
       ],
     },
