@@ -1,7 +1,7 @@
 {
   "name": "glaze_combinations",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -47,5 +47,6 @@
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.67.0",
     "vite": "^8.2.2"
-  }
+  },
+  "packageManager": "pnpm@12.3.4"
 }
