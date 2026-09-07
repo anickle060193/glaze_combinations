@@ -12,24 +12,31 @@ const glazeMapping: Record<string, Glaze> = {};
 const comboMapping: Record<string, GlazeCombo> = {};
 const fireTemps = new Set<string>();
 
-for( const { label, fireTemp, comboImageUrl, glazeImageUrls } of rawCombos )
+for( const { label, fireTemp: rawFireTemp, comboImageUrl, glazeImageUrls } of rawCombos )
 {
-  fireTemps.add( fireTemp );
-
-  const match = /^(.*?) over (.*?)(?: on (.*?))?$/i.exec( label );
-  if( !match )
+  const labelMatch = /^(.*?) over (.*?)(?: on (.*?))?$/i.exec( label );
+  if( !labelMatch )
   {
     console.warn( 'Unexpected glaze label format:', label );
     continue;
   }
 
-  const glazes = match.slice( 1 ).filter( ( s ) => !!s );
+  const glazes = labelMatch.slice( 1 ).filter( ( s ) => !!s );
 
   if( glazes.length !== glazeImageUrls.length )
   {
-    console.log( 'Glaze name/image count mismatch:', glazes, '!=', glazeImageUrls );
+    console.warn( 'Glaze name/image count mismatch:', glazes, '!=', glazeImageUrls );
     continue;
   }
+
+  const fireTempMatch = /^Cone\s*(\d+)$/.exec( rawFireTemp );
+  if( !fireTempMatch )
+  {
+    console.warn( 'Unexpected fire temp format:', rawFireTemp );
+    continue;
+  }
+  const fireTemp = fireTempMatch[ 1 ];
+  fireTemps.add( fireTemp );
 
   let valid = true;
   const comboGlazeIds: string[] = [];

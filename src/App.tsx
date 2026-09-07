@@ -13,13 +13,13 @@ const theme = createTheme( {
   colorSchemes: {
     light: {
       palette: {
-        primary: colors.deepOrange,
+        primary: colors.blue,
         secondary: colors.amber,
       },
     },
     dark: {
       palette: {
-        primary: colors.orange,
+        primary: colors.blue,
         secondary: colors.amber,
       },
     },

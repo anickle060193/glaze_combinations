@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Card, styled, Typography, type CardProps } from '@mui/material';
+import ConeIcon from '@mui/icons-material/ChangeHistory';
 
 import { ExternalLink } from './ExternalLink';
 import { GlazeLink } from './GlazeLink';
@@ -17,6 +18,19 @@ const ComboGlazeImage = styled( 'img' )( () => ( {
   display: 'block',
   width: '100%',
   flex: 1,
+} ) );
+
+const FireTempText = styled( 'div' )( ( { theme } ) => ( {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  margin: theme.spacing( 0.5 ),
+  color: '#000',
+  lineHeight: 1,
+  pointerEvents: 'none',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
 } ) );
 
 interface Props extends CardProps
@@ -50,6 +64,7 @@ export const GlazeComboCard: React.FC<Props> = ( { combo, glazes, ...cardProps }
           sx={{
             flex: 2,
             overflow: 'clip',
+            position: 'relative',
           }}
         >
           <ExternalLink
@@ -61,6 +76,9 @@ export const GlazeComboCard: React.FC<Props> = ( { combo, glazes, ...cardProps }
               alt={comboGlazes.map( ( g ) => g?.name ).join( ' over ' )}
             />
           </ExternalLink>
+          <FireTempText>
+            <ConeIcon fontSize="inherit" color="inherit" /> {combo.fireTemp}
+          </FireTempText>
         </Box>
         <Box
           sx={{

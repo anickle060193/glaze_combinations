@@ -51,10 +51,11 @@ export const MainScreen: React.FC = () =>
   const glazesData = useAsyncData( 'glazes data', fetchGlazesData );
 
   const [ availableGlazeIds, saveAvailableGlazeIds ] = useLocalStorage<string[]>( 'selected-available-glazes', EMPTY );
-  const [ selectedFireTemps, saveSelectedFireTemps ] = useLocalStorage<string[]>( 'selected-fire-temps', EMPTY );
+  const [ selectedFireTempIds, saveSelectedFireTempIds ] = useLocalStorage<string[]>( 'selected-fire-temps', EMPTY );
   const [ requiredGlazeIds, setRequiredGlazeIds ] = React.useState<string[]>( [] );
 
   const availableGlazes = glazesData.data?.glazes.filter( ( g ) => availableGlazeIds.includes( g.id ) ) ?? EMPTY;
+  const selectedFireTemps = glazesData.data?.fireTemps.filter( ( t ) => selectedFireTempIds.includes( t ) ) ?? selectedFireTempIds;
   const requiredGlazes = glazesData.data?.glazes.filter( ( g ) => requiredGlazeIds.includes( g.id ) ) ?? EMPTY;
 
   const filteredCombos = glazesData.data?.combos.filter( ( combo ) =>
@@ -184,9 +185,9 @@ export const MainScreen: React.FC = () =>
           startIcon={<TemperatureIcon />}
           options={glazesData.data?.fireTemps ?? EMPTY}
           value={selectedFireTemps}
-          onChange={( value ) => saveSelectedFireTemps( value )}
+          onChange={( value ) => saveSelectedFireTempIds( value )}
           getOptionKey={( o ) => o}
-          getOptionLabel={( o ) => o}
+          getOptionLabel={( o ) => `Cone ${o}`}
         />
         <FilterButton
           sx={{
