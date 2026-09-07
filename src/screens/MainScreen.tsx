@@ -1,11 +1,11 @@
 import React from 'react';
-import { Box, Divider, styled, Typography } from '@mui/material';
+import { Box, styled, Typography } from '@mui/material';
 import GlazeIcon from '@mui/icons-material/InvertColors';
 import TemperatureIcon from '@mui/icons-material/Thermostat';
 
 import { FilterButton } from '../components/FilterButton';
 import { GlazeComboGrid } from '../components/GlazeComboGrid';
-import { ExternalLink } from '../components/ExternalLink';
+import { MaycoFooter } from '../components/MaycoFooter';
 
 import { useAsyncData } from '../hooks/useAsyncData';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -160,26 +160,7 @@ export const MainScreen: React.FC = () =>
                   )
             )}
       </Box>
-      <Box
-        component="footer"
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          paddingBottom: 1,
-          gap: 1,
-        }}
-      >
-        <Divider
-          sx={{
-            alignSelf: 'stretch',
-          }}
-          variant="middle"
-        />
-        <Typography variant="caption" color="textSecondary">
-          All glaze names and images provided by <ExternalLink href="https://www.maycocolors.com">Mayco</ExternalLink>.
-        </Typography>
-      </Box>
+      <MaycoFooter />
     </Box>
   );
 };
