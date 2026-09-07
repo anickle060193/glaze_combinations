@@ -9,8 +9,8 @@
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
-    "wrangler:deploy": "pnpm run build && wrangler deploy",
-    "wrangler:preview": "pnpm run build && wrangler dev",
+    "wrangler:deploy": "wrangler deploy",
+    "wrangler:preview": "wrangler dev",
     "scrape": "tsx scripts/download_glazes_data.ts",
     "parse": "tsx scripts/parse_glazes_data.ts"
   },
