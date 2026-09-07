@@ -5,7 +5,7 @@ import ConeIcon from '@mui/icons-material/ChangeHistory';
 import { ExternalLink } from './ExternalLink';
 import { GlazeLink } from './GlazeLink';
 
-import type { Glaze, GlazeCombo } from '../utilities/glazes';
+import type { Glaze, GlazeCombo } from '../utilities/glaze_types';
 import { mergeSx } from '../utilities/mergeSx';
 
 const ComboImage = styled( 'img' )( () => ( {

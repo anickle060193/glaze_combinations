@@ -2,7 +2,7 @@ import React from 'react';
 
 import { ExternalLink } from './ExternalLink';
 
-import type { Glaze } from '../utilities/glazes';
+import type { Glaze } from '../utilities/glaze_types';
 
 interface Props
 {

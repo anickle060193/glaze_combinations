@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 
 import { PARSED_GLAZES_DATA_FILENAME, RAW_GLAZES_DATA_FILENAME, type RawGlazeDataCombo } from './common.ts';
 
-import type { Glaze, GlazeCombo, GlazeData } from '../src/utilities/glazes.ts';
+import type { Glaze, GlazeCombo, GlazeData } from '../src/utilities/glaze_types.ts';
 import path from 'node:path';
 
 const rawCombosContent = await fs.readFile( RAW_GLAZES_DATA_FILENAME, { encoding: 'utf-8' } );

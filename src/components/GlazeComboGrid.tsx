@@ -3,7 +3,7 @@ import { Grid } from '@mui/material';
 
 import { GlazeComboCard } from './GlazeComboCard';
 
-import type { Glaze, GlazeCombo } from '../utilities/glazes';
+import type { Glaze, GlazeCombo } from '../utilities/glaze_types';
 
 interface Props
 {

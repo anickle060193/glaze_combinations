@@ -13,7 +13,7 @@ import { useAsyncData } from '../hooks/useAsyncData';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useLocation } from '../hooks/useLocation';
 
-import { fetchGlazesData } from '../utilities/glazes';
+import { fetchGlazesData } from '../utilities/glaze_data';
 
 const IMPORT_AVAILABLE_GLAZE_IDS_PARAM = 'import-available-glazes';
 
