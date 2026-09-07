@@ -1,19 +1,19 @@
 import React from 'react';
 import { Box, Card, Grid, styled, Typography } from '@mui/material';
 
+import { GlazeLink } from './GlazeLink';
+import { ExternalLink } from './ExternalLink';
+
 import type { Glaze, GlazeCombo } from '../utilities/glazes';
 
-const ComboImage = styled( 'img' )( ( { theme } ) => ( {
+const ComboImage = styled( 'img' )( () => ( {
+  display: 'block',
   width: '100%',
   height: '100%',
-  transformOrigin: 'center',
-  transition: theme.transitions.create( [ 'transform' ] ),
-  '&:hover, &:focus': {
-    transform: 'scale( 2.0 )',
-  },
 } ) );
 
 const ComboGlazeImage = styled( 'img' )( () => ( {
+  display: 'block',
   width: '100%',
   flex: 1,
 } ) );
@@ -46,6 +46,7 @@ export const GlazeComboGrid: React.FC<Props> = ( { glazeCombos, glazes } ) =>
               display: 'flex',
               flexDirection: 'column',
             }}
+            tabIndex={-1}
           >
             <Box
               sx={{
@@ -59,17 +60,14 @@ export const GlazeComboGrid: React.FC<Props> = ( { glazeCombos, glazes } ) =>
                   overflow: 'clip',
                 }}
               >
-                <a
+                <ExternalLink
                   href={combo.imageUrls[ 0 ]}
-                  target="_blank"
-                  rel="noreferrer noopener"
                 >
                   <ComboImage
                     src={combo.imageUrls[ 0 ]}
                     loading="lazy"
-                    tabIndex={-1}
                   />
-                </a>
+                </ExternalLink>
               </Box>
               <Box
                 sx={{
@@ -78,12 +76,16 @@ export const GlazeComboGrid: React.FC<Props> = ( { glazeCombos, glazes } ) =>
                   flexDirection: 'column',
                 }}
               >
-                {comboGlazes.map( ( g ) => (
-                  <ComboGlazeImage
-                    key={g?.id}
-                    src={g?.imageUrls[ combo.fireTemp ]}
-                    alt={g?.name}
-                  />
+                {comboGlazes.map( ( g ) => g && (
+                  <GlazeLink
+                    key={g.id}
+                    glaze={g}
+                  >
+                    <ComboGlazeImage
+                      src={g.imageUrls[ combo.fireTemp ]}
+                      alt={g.name}
+                    />
+                  </GlazeLink>
                 ) )}
               </Box>
             </Box>

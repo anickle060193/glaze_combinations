@@ -12,14 +12,14 @@ const theme = createTheme( {
   cssVariables: true,
   colorSchemes: {
     light: true,
-    dark: false,
+    dark: true,
   },
 } );
 
 export const App: React.FC = () =>
 {
   return (
-    <ThemeProvider theme={theme} defaultMode="light" storageManager={null}>
+    <ThemeProvider theme={theme} defaultMode="system" storageManager={null}>
       <CssBaseline />
       <MainScreen />
     </ThemeProvider>

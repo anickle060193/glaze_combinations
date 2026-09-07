@@ -50,6 +50,7 @@ export function FilterButton<T>( {
   getOptionIcon,
 }: Props<T> ): React.ReactNode
 {
+  const buttonRef = React.useRef<HTMLButtonElement | null>( null );
   const [ anchorEl, setAnchorEl ] = React.useState<HTMLElement | null>( null );
 
   const [ inputValue, setInputValue ] = React.useState( '' );
@@ -72,14 +73,23 @@ export function FilterButton<T>( {
   return (
     <>
       <Button
+        ref={buttonRef}
         sx={sx}
         variant="outlined"
+        size="small"
         startIcon={startIcon}
         endIcon={<DropDownIcon />}
         onClick={( e ) =>
         {
-          setAnchorEl( e.currentTarget );
-          setInputValue( '' );
+          if( anchorEl )
+          {
+            setAnchorEl( null );
+          }
+          else
+          {
+            setAnchorEl( e.currentTarget );
+            setInputValue( '' );
+          }
         }}
       >
         {label} ({ showAll && value.length === 0 ? 'All' : value.length})
@@ -90,14 +100,22 @@ export function FilterButton<T>( {
         placement="bottom-start"
       >
         <ClickAwayListener
-          onClickAway={() =>
+          mouseEvent="onMouseDown"
+          touchEvent="onTouchStart"
+          onClickAway={( e ) =>
           {
+            if( e.target instanceof HTMLElement
+              && buttonRef.current?.contains( e.target ) )
+            {
+              return;
+            }
             setAnchorEl( null );
           }}
         >
           <Paper
             sx={{
-              maxHeight: 400,
+              minWidth: anchorEl?.clientWidth,
+              maxHeight: 'min( 600px, 90vh )',
               display: 'flex',
               flexDirection: 'column',
             }}
@@ -116,6 +134,13 @@ export function FilterButton<T>( {
                 placeholder={placeholder}
                 value={inputValue}
                 onChange={( e ) => setInputValue( e.currentTarget.value )}
+                onKeyDown={( e ) =>
+                {
+                  if( e.key === 'Escape' )
+                  {
+                    setAnchorEl( null );
+                  }
+                }}
                 endAdornment={(
                   <InputAdornment position="end">
                     <Tooltip title="Clear filter">
