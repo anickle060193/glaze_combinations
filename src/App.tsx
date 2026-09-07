@@ -1,5 +1,5 @@
 import React from 'react';
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { colors, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -11,8 +11,18 @@ import { MainScreen } from './screens/MainScreen';
 const theme = createTheme( {
   cssVariables: true,
   colorSchemes: {
-    light: true,
-    dark: true,
+    light: {
+      palette: {
+        primary: colors.deepOrange,
+        secondary: colors.amber,
+      },
+    },
+    dark: {
+      palette: {
+        primary: colors.orange,
+        secondary: colors.amber,
+      },
+    },
   },
 } );
 

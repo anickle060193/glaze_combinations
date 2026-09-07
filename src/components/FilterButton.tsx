@@ -29,7 +29,7 @@ interface Props<T>
   showAll?: boolean;
   placeholder: string;
   options: readonly T[];
-  value: T[];
+  value: readonly T[];
   onChange: ( value: T[] ) => void;
   getOptionKey: ( option: T ) => string | number;
   getOptionLabel: ( option: T ) => string;
@@ -230,7 +230,7 @@ interface OptionRowProps<T>
   getOptionKey: ( option: T ) => string | number;
   getOptionLabel: ( option: T ) => string;
   getOptionIcon: ( ( option: T ) => React.ReactNode ) | undefined;
-  value: T[];
+  value: readonly T[];
   onOptionClick: ( option: T ) => void;
 }
 

@@ -5,7 +5,7 @@ import TemperatureIcon from '@mui/icons-material/Thermostat';
 
 import { FilterButton } from '../components/FilterButton';
 import { GlazeComboGrid } from '../components/GlazeComboGrid';
-import { MaycoFooter } from '../components/MaycoFooter';
+import { AttributionFooter } from '../components/AttributionFooter';
 
 import { useAsyncData } from '../hooks/useAsyncData';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -45,19 +45,31 @@ export const MainScreen: React.FC = () =>
 {
   const glazesData = useAsyncData( 'glazes data', fetchGlazesData );
 
-  const [ selectedGlazeIds, saveSelectedGlazeIds ] = useLocalStorage<string[]>( 'selected-glazes', EMPTY );
-
+  const [ availableGlazeIds, saveAvailableGlazeIds ] = useLocalStorage<string[]>( 'selected-available-glazes', EMPTY );
   const [ selectedFireTemps, saveSelectedFireTemps ] = useLocalStorage<string[]>( 'selected-fire-temps', EMPTY );
+  const [ requiredGlazeIds, setRequiredGlazeIds ] = React.useState<string[]>( [] );
 
-  const selectedGlazes = glazesData.data?.glazes.filter( ( g ) => selectedGlazeIds.includes( g.id ) ) ?? [];
+  const availableGlazes = glazesData.data?.glazes.filter( ( g ) => availableGlazeIds.includes( g.id ) ) ?? EMPTY;
+  const requiredGlazes = glazesData.data?.glazes.filter( ( g ) => requiredGlazeIds.includes( g.id ) ) ?? EMPTY;
 
   const filteredCombos = glazesData.data?.combos.filter( ( combo ) =>
   {
-    if( selectedGlazes.length > 0 )
+    if( availableGlazes.length > 0 )
     {
       for( const glazeId of combo.glazeIds )
       {
-        if( !selectedGlazes.find( ( g ) => g.id === glazeId ) )
+        if( !availableGlazes.find( ( g ) => g.id === glazeId ) )
+        {
+          return false;
+        }
+      }
+    }
+
+    if( requiredGlazes.length > 0 )
+    {
+      for( const requiredGlaze of requiredGlazes )
+      {
+        if( !combo.glazeIds.includes( requiredGlaze.id ) )
         {
           return false;
         }
@@ -81,19 +93,26 @@ export const MainScreen: React.FC = () =>
         width: '100%',
         height: '100%',
         paddingX: 1,
+        position: 'relative',
         display: 'flex',
         flexDirection: 'column',
+        overflowY: 'scroll',
       }}
     >
       <Box
-        sx={{
+        sx={( theme ) => ( {
+          [ theme.breakpoints.up( 'sm' ) ]: {
+            position: 'sticky',
+            top: 0,
+          },
+          backgroundColor: 'background.default',
           paddingY: 1,
           display: 'flex',
           flexDirection: 'row',
           flexFlow: 'row',
           flexWrap: 'wrap',
           gap: 1,
-        }}
+        } )}
       >
         <FilterButton
           sx={{
@@ -101,13 +120,13 @@ export const MainScreen: React.FC = () =>
             minWidth: 275,
             maxWidth: '100%',
           }}
-          label="Select Glazes"
+          label="Select Available Glazes"
           showAll={false}
           placeholder="Filter glazes"
           startIcon={<GlazeIcon />}
           options={glazesData.data?.glazes ?? EMPTY}
-          value={selectedGlazes}
-          onChange={( value ) => saveSelectedGlazeIds( value.map( ( g ) => g.id ) )}
+          value={availableGlazes}
+          onChange={( value ) => saveAvailableGlazeIds( value.map( ( g ) => g.id ) )}
           getOptionKey={( o ) => o.id}
           getOptionLabel={( o ) => o.name}
           getOptionIcon={( o ) => (
@@ -133,17 +152,36 @@ export const MainScreen: React.FC = () =>
           getOptionKey={( o ) => o}
           getOptionLabel={( o ) => o}
         />
+        <FilterButton
+          sx={{
+            flex: 1,
+            minWidth: 275,
+            maxWidth: '100%',
+          }}
+          label="Select Required Glazes"
+          showAll={false}
+          placeholder="Filter required glazes"
+          startIcon={<GlazeIcon />}
+          options={availableGlazes}
+          value={requiredGlazes}
+          onChange={( value ) => setRequiredGlazeIds( value.map( ( g ) => g.id ) )}
+          getOptionKey={( o ) => o.id}
+          getOptionLabel={( o ) => o.name}
+          getOptionIcon={( o ) => (
+            <ListImage
+              loading="lazy"
+              src={Object.values( o.imageUrls )[ 0 ]}
+              alt={o.name}
+            />
+          )}
+        />
       </Box>
       <Box
         sx={{
           paddingBottom: 1,
-          flex: 1,
-          flexShrink: 1,
-          minHeight: 0,
-          overflowY: 'scroll',
         }}
       >
-        {selectedGlazes.length < 2
+        {availableGlazes.length < 2
           ? (
               <InfoText>Select at least two glazes to find combinations</InfoText>
             )
@@ -160,7 +198,7 @@ export const MainScreen: React.FC = () =>
                   )
             )}
       </Box>
-      <MaycoFooter />
+      <AttributionFooter />
     </Box>
   );
 };
