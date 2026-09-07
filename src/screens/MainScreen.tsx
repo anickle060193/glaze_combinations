@@ -1,16 +1,21 @@
 import React from 'react';
-import { Box, styled, Typography } from '@mui/material';
+import { Box, Button, styled, Typography } from '@mui/material';
 import GlazeIcon from '@mui/icons-material/InvertColors';
 import TemperatureIcon from '@mui/icons-material/Thermostat';
+import QrCodeIcon from '@mui/icons-material/QrCode2';
 
 import { FilterButton } from '../components/FilterButton';
 import { GlazeComboGrid } from '../components/GlazeComboGrid';
 import { AttributionFooter } from '../components/AttributionFooter';
+import { QrCodeDialog } from '../components/QrCodeDialog';
 
 import { useAsyncData } from '../hooks/useAsyncData';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useLocation } from '../hooks/useLocation';
 
 import { fetchGlazesData } from '../utilities/glazes';
+
+const IMPORT_AVAILABLE_GLAZE_IDS_PARAM = 'import-available-glazes';
 
 const ListImage = styled( 'img' )( ( { theme } ) => ( {
   display: 'block',
@@ -86,6 +91,37 @@ export const MainScreen: React.FC = () =>
 
     return true;
   } ) ?? EMPTY;
+
+  const location = useLocation();
+
+  const [ shareAvailableGlazesOpen, setShareAvailableGlazesOpen ] = React.useState( false );
+  const importAvailableGlazesUrl = React.useMemo( () =>
+  {
+    const url = new URL( location.href );
+    url.hash = '';
+    url.search = '';
+
+    url.searchParams.set( IMPORT_AVAILABLE_GLAZE_IDS_PARAM, availableGlazes.map( ( g ) => g.id ).join( ',' ) );
+
+    return url.href;
+  }, [ location.href, availableGlazes ] );
+
+  React.useEffect( () =>
+  {
+    const availableGlazeIdsImport = location.searchParams.get( IMPORT_AVAILABLE_GLAZE_IDS_PARAM );
+    if( !availableGlazeIdsImport )
+    {
+      return;
+    }
+
+    const glazeIds = availableGlazeIdsImport.toLowerCase().split( ',' ).filter( ( gid ) => /^\w+-\d+$/.test( gid ) );
+    saveAvailableGlazeIds( glazeIds );
+
+    const newUrl = new URL( location.href );
+    newUrl.searchParams.delete( IMPORT_AVAILABLE_GLAZE_IDS_PARAM );
+
+    history.replaceState( null, '', newUrl );
+  }, [ location, saveAvailableGlazeIds ] );
 
   return (
     <Box
@@ -198,6 +234,24 @@ export const MainScreen: React.FC = () =>
                   )
             )}
       </Box>
+      <Button
+        sx={{
+          alignSelf: 'center',
+          marginBottom: 0.5,
+        }}
+        variant="text"
+        color="secondary"
+        startIcon={<QrCodeIcon />}
+        disabled={availableGlazes.length <= 0}
+        onClick={() => setShareAvailableGlazesOpen( true )}
+      >
+        Share Available Glazes
+      </Button>
+      <QrCodeDialog
+        open={shareAvailableGlazesOpen}
+        onClose={() => setShareAvailableGlazesOpen( false )}
+        content={importAvailableGlazesUrl}
+      />
       <AttributionFooter />
     </Box>
   );
