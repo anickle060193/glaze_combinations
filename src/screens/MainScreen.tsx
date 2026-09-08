@@ -13,7 +13,7 @@ import { useAsyncData } from '../hooks/useAsyncData';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useLocation } from '../hooks/useLocation';
 
-import { fetchGlazesData } from '../utilities/glaze_data';
+import { fetchGlazesData, getGlazeImageUrl } from '../utilities/glaze_data';
 
 const IMPORT_AVAILABLE_GLAZE_IDS_PARAM = 'import-available-glazes';
 
@@ -169,7 +169,7 @@ export const MainScreen: React.FC = () =>
           getOptionIcon={( o ) => (
             <ListImage
               loading="lazy"
-              src={Object.values( o.imageUrls )[ 0 ]}
+              src={getGlazeImageUrl( o, selectedFireTemps )}
               alt={o.name}
             />
           )}
@@ -207,7 +207,7 @@ export const MainScreen: React.FC = () =>
           getOptionIcon={( o ) => (
             <ListImage
               loading="lazy"
-              src={Object.values( o.imageUrls )[ 0 ]}
+              src={getGlazeImageUrl( o, selectedFireTemps )}
               alt={o.name}
             />
           )}
