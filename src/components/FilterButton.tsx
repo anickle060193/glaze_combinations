@@ -95,6 +95,9 @@ export function FilterButton<T>( {
         {label} ({ showAll && value.length === 0 ? 'All' : value.length})
       </Button>
       <Popper
+        sx={{
+          zIndex: 1,
+        }}
         open={!!anchorEl}
         anchorEl={anchorEl}
         placement="bottom-start"
@@ -114,11 +117,13 @@ export function FilterButton<T>( {
         >
           <Paper
             sx={{
+              marginTop: 0.5,
               minWidth: anchorEl?.clientWidth,
               maxHeight: 'min( 600px, 90vh )',
               display: 'flex',
               flexDirection: 'column',
             }}
+            elevation={4}
           >
             <Box
               sx={{
@@ -130,7 +135,6 @@ export function FilterButton<T>( {
               <OutlinedInput
                 size="small"
                 fullWidth={true}
-                autoFocus={true}
                 placeholder={placeholder}
                 value={inputValue}
                 onChange={( e ) => setInputValue( e.currentTarget.value )}
