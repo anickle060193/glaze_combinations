@@ -1,6 +1,8 @@
 import React from 'react';
-import { Box, Card, styled, Typography, type CardProps } from '@mui/material';
+import { Box, Card, Checkbox, styled, Typography, type CardProps } from '@mui/material';
 import ConeIcon from '@mui/icons-material/ChangeHistory';
+import FavoriteIcon from '@mui/icons-material/Star';
+import FavoriteOutlineIcon from '@mui/icons-material/StarBorder';
 
 import { ExternalLink } from './ExternalLink';
 import { GlazeLink } from './GlazeLink';
@@ -37,9 +39,16 @@ interface Props extends CardProps
 {
   combo: GlazeCombo;
   glazes: readonly Glaze[];
+  favorite: boolean;
+  onFavoriteChange: ( favorite: boolean ) => void;
+  marked: boolean;
+  onMarkedChange: ( marked: boolean ) => void;
 }
 
-export const GlazeComboCard: React.FC<Props> = ( { combo, glazes, ...cardProps } ) =>
+export const GlazeComboCard: React.FC<Props> = ( {
+  combo, glazes, favorite, onFavoriteChange, marked, onMarkedChange,
+  ...cardProps
+} ) =>
 {
   const comboGlazes = combo.glazeIds.map( ( gid ) => glazes.find( ( g ) => g.id === gid ) );
 
@@ -104,38 +113,59 @@ export const GlazeComboCard: React.FC<Props> = ( { combo, glazes, ...cardProps }
         sx={{
           paddingY: 1,
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'row',
           alignItems: 'center',
         }}
       >
-        {comboGlazes.map( ( g, i ) => (
-          <React.Fragment key={g?.id}>
-            <Typography
-              component="span"
-              sx={{
-                lineHeight: 1,
-              }}
-              variant="overline"
-            >
-              {g?.name}
-            </Typography>
-            {i < comboGlazes.length - 1 && (
+        <Checkbox
+          color="secondary"
+          icon={<FavoriteOutlineIcon />}
+          checkedIcon={<FavoriteIcon />}
+          checked={favorite}
+          onChange={( _e, checked ) => onFavoriteChange( checked )}
+        />
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          {comboGlazes.map( ( g, i ) => (
+            <React.Fragment key={g?.id}>
               <Typography
+                component="span"
                 sx={{
                   lineHeight: 1,
-                  fontStyle: 'italic',
-                  marginTop: 0.5,
-                  marginBottom: 0.75,
                 }}
-                component="span"
-                variant="subtitle2"
-                color="textSecondary"
+                variant="overline"
               >
-                {i === 1 ? 'on' : 'over'}
+                {g?.name}
               </Typography>
-            )}
-          </React.Fragment>
-        ) )}
+              {i < comboGlazes.length - 1 && (
+                <Typography
+                  sx={{
+                    lineHeight: 1,
+                    fontStyle: 'italic',
+                    marginTop: 0.5,
+                    marginBottom: 0.75,
+                  }}
+                  component="span"
+                  variant="subtitle2"
+                  color="textSecondary"
+                >
+                  {i === 1 ? 'on' : 'over'}
+                </Typography>
+              )}
+            </React.Fragment>
+          ) )}
+        </Box>
+        <Checkbox
+          color="success"
+          checked={marked}
+          onChange={( _e, checked ) => onMarkedChange( checked )}
+        />
       </Box>
     </Card>
   );

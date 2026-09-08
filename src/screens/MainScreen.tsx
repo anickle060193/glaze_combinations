@@ -5,6 +5,7 @@ import TemperatureIcon from '@mui/icons-material/Thermostat';
 import QrCodeIcon from '@mui/icons-material/QrCode2';
 
 import { FilterButton } from '../components/FilterButton';
+import { GlazeComboFilters, type FavoritesFilter, type MarkedFilter } from '../components/GlazeComboFilters';
 import { GlazeComboGrid } from '../components/GlazeComboGrid';
 import { AttributionFooter } from '../components/AttributionFooter';
 import { QrCodeDialog } from '../components/QrCodeDialog';
@@ -58,6 +59,12 @@ export const MainScreen: React.FC = () =>
   const selectedFireTemps = glazesData.data?.fireTemps.filter( ( t ) => selectedFireTempIds.includes( t ) ) ?? selectedFireTempIds;
   const requiredGlazes = glazesData.data?.glazes.filter( ( g ) => requiredGlazeIds.includes( g.id ) ) ?? EMPTY;
 
+  const [ favoriteComboIds, saveFavoriteComboIds ] = useLocalStorage<string[]>( 'favorite-combos', EMPTY );
+  const [ markedComboIds, saveMarkedComboIds ] = useLocalStorage<string[]>( 'marked-combos', EMPTY );
+
+  const [ favoritesFilter, setFavoritesFilter ] = React.useState<FavoritesFilter>( 'all' );
+  const [ markedFilter, setMarkedFilter ] = React.useState<MarkedFilter>( 'all' );
+
   const filteredCombos = glazesData.data?.combos.filter( ( combo ) =>
   {
     if( availableGlazes.length > 0 )
@@ -85,6 +92,38 @@ export const MainScreen: React.FC = () =>
     if( selectedFireTemps.length > 0 )
     {
       if( !selectedFireTemps.includes( combo.fireTemp ) )
+      {
+        return false;
+      }
+    }
+
+    const favorite = favoriteComboIds.includes( combo.id );
+    if( favoritesFilter === 'favorites' )
+    {
+      if( !favorite )
+      {
+        return false;
+      }
+    }
+    else if( favoritesFilter === 'nonfavorites' )
+    {
+      if( favorite )
+      {
+        return false;
+      }
+    }
+
+    const marked = markedComboIds.includes( combo.id );
+    if( markedFilter === 'marked' )
+    {
+      if( !marked )
+      {
+        return false;
+      }
+    }
+    else if( markedFilter === 'nonmarked' )
+    {
+      if( marked )
       {
         return false;
       }
@@ -213,6 +252,12 @@ export const MainScreen: React.FC = () =>
             />
           )}
         />
+        <GlazeComboFilters
+          favoritesFilter={favoritesFilter}
+          onFavoritesFilterChange={setFavoritesFilter}
+          markedFilter={markedFilter}
+          onMarkedFilterChange={setMarkedFilter}
+        />
       </Box>
       <Box
         sx={{
@@ -234,6 +279,30 @@ export const MainScreen: React.FC = () =>
                     <GlazeComboGrid
                       glazeCombos={filteredCombos}
                       glazes={glazesData.data?.glazes ?? EMPTY}
+                      favoriteComboIds={favoriteComboIds}
+                      onFavoriteChange={( combo, favorite ) =>
+                      {
+                        if( favorite )
+                        {
+                          saveFavoriteComboIds( [ ...favoriteComboIds, combo.id ] );
+                        }
+                        else
+                        {
+                          saveFavoriteComboIds( favoriteComboIds.filter( ( c ) => c !== combo.id ) );
+                        }
+                      }}
+                      markedComboIds={markedComboIds}
+                      onMarkedChange={( combo, marked ) =>
+                      {
+                        if( marked )
+                        {
+                          saveMarkedComboIds( [ ...markedComboIds, combo.id ] );
+                        }
+                        else
+                        {
+                          saveMarkedComboIds( markedComboIds.filter( ( c ) => c !== combo.id ) );
+                        }
+                      }}
                     />
                   )
             )}
