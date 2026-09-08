@@ -217,6 +217,8 @@ export const MainScreen: React.FC = () =>
       <Box
         sx={{
           paddingBottom: 1,
+          flex: 1,
+          flexShrink: 0,
         }}
       >
         {availableGlazes.length < 2
