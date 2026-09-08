@@ -23,7 +23,6 @@ export const GlazeComboGrid: React.FC<Props> = ( { glazeCombos, glazes } ) =>
             sm: 6,
             md: 4,
             lg: 3,
-            xl: 1,
           }}
           component={GlazeComboCard}
           combo={combo}

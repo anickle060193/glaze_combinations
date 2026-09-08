@@ -142,6 +142,7 @@ export const MainScreen: React.FC = () =>
             position: 'sticky',
             top: 0,
           },
+          zIndex: 1,
           backgroundColor: 'background.default',
           paddingY: 1,
           display: 'flex',
