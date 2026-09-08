@@ -9,8 +9,6 @@
     "typecheck": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
-    "wrangler:deploy": "wrangler deploy",
-    "wrangler:preview": "wrangler dev",
     "scrape": "tsx scripts/download_glazes_data.ts",
     "parse": "tsx scripts/parse_glazes_data.ts"
   },
@@ -48,8 +46,7 @@
     "tsx": "^4.23.13",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.67.0",
-    "vite": "^8.2.2",
-    "wrangler": "^4.129.0"
+    "vite": "^8.2.2"
   },
   "packageManager": "pnpm@12.3.4"
 }
