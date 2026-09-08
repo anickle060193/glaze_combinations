@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Box,
   Button,
-  ClickAwayListener,
   IconButton,
   InputAdornment,
   List,
@@ -11,8 +10,7 @@ import {
   ListItemIcon,
   ListItemText,
   OutlinedInput,
-  Paper,
-  Popper,
+  Popover,
   Tooltip,
   type SxProps,
   type Theme,
@@ -50,8 +48,8 @@ export function FilterButton<T>( {
   getOptionIcon,
 }: Props<T> ): React.ReactNode
 {
-  const buttonRef = React.useRef<HTMLButtonElement | null>( null );
   const [ anchorEl, setAnchorEl ] = React.useState<HTMLElement | null>( null );
+  const [ popupMinWidth, setPopupMinWidth ] = React.useState( 0 );
 
   const [ inputValue, setInputValue ] = React.useState( '' );
 
@@ -73,7 +71,6 @@ export function FilterButton<T>( {
   return (
     <>
       <Button
-        ref={buttonRef}
         sx={sx}
         variant="outlined"
         size="small"
@@ -88,112 +85,105 @@ export function FilterButton<T>( {
           else
           {
             setAnchorEl( e.currentTarget );
+            setPopupMinWidth( e.currentTarget.clientWidth );
             setInputValue( '' );
           }
         }}
       >
         {label} ({ showAll && value.length === 0 ? 'All' : value.length})
       </Button>
-      <Popper
-        sx={{
-          zIndex: 1,
-        }}
+      <Popover
         open={!!anchorEl}
+        onClose={() => setAnchorEl( null )}
         anchorEl={anchorEl}
-        placement="bottom-start"
-      >
-        <ClickAwayListener
-          mouseEvent="onMouseDown"
-          touchEvent="onTouchStart"
-          onClickAway={( e ) =>
-          {
-            if( e.target instanceof HTMLElement
-              && buttonRef.current?.contains( e.target ) )
-            {
-              return;
-            }
-            setAnchorEl( null );
-          }}
-        >
-          <Paper
-            sx={{
-              marginTop: 0.5,
-              minWidth: anchorEl?.clientWidth,
+        anchorOrigin={{
+          horizontal: 'left',
+          vertical: 'bottom',
+        }}
+        transformOrigin={{
+          horizontal: 'left',
+          vertical: 'top',
+        }}
+        marginThreshold={0}
+        slotProps={{
+          paper: {
+            sx: {
+              marginTop: 1,
+              minWidth: popupMinWidth,
               maxHeight: 'min( 600px, 90vh )',
               display: 'flex',
               flexDirection: 'column',
-            }}
-            elevation={4}
-          >
-            <Box
-              sx={{
-                paddingX: 1,
-                paddingTop: 1,
-                paddingBottom: 0.5,
-              }}
-            >
-              <OutlinedInput
-                size="small"
-                fullWidth={true}
-                placeholder={placeholder}
-                value={inputValue}
-                onChange={( e ) => setInputValue( e.currentTarget.value )}
-                onKeyDown={( e ) =>
-                {
-                  if( e.key === 'Escape' )
-                  {
-                    setAnchorEl( null );
-                  }
-                }}
-                endAdornment={(
-                  <InputAdornment position="end">
-                    <Tooltip title="Clear filter">
-                      <span>
-                        <IconButton
-                          edge="end"
-                          size="small"
-                          disabled={value.length === 0}
-                          onClick={( e ) =>
-                          {
-                            e.preventDefault();
-
-                            onChange( [] );
-                          }}
-                        >
-                          <ClearFilterIcon fontSize="small" />
-                        </IconButton>
-                      </span>
-                    </Tooltip>
-                  </InputAdornment>
-                )}
-              />
-            </Box>
-            <List
-              sx={{
-                paddingTop: 0,
-              }}
-              dense={true}
-              component={ListComponent<T>}
-              options={filteredOptions}
-              getOptionKey={getOptionKey}
-              getOptionLabel={getOptionLabel}
-              getOptionIcon={getOptionIcon}
-              value={value}
-              onOptionClick={( option ) =>
+            },
+          },
+        }}
+      >
+        <Box
+          sx={{
+            paddingX: 1,
+            paddingTop: 1,
+            paddingBottom: 0.5,
+          }}
+        >
+          <OutlinedInput
+            size="small"
+            fullWidth={true}
+            placeholder={placeholder}
+            value={inputValue}
+            onChange={( e ) => setInputValue( e.currentTarget.value )}
+            onKeyDown={( e ) =>
+            {
+              if( e.key === 'Escape' )
               {
-                if( value.includes( option ) )
-                {
-                  onChange( value.filter( ( o ) => o !== option ) );
-                }
-                else
-                {
-                  onChange( [ ...value, option ] );
-                }
-              }}
-            />
-          </Paper>
-        </ClickAwayListener>
-      </Popper>
+                setAnchorEl( null );
+              }
+            }}
+            endAdornment={(
+              <InputAdornment position="end">
+                <Tooltip title="Clear filter">
+                  <span>
+                    <IconButton
+                      edge="end"
+                      size="small"
+                      disabled={value.length === 0}
+                      onClick={( e ) =>
+                      {
+                        e.preventDefault();
+
+                        onChange( [] );
+                      }}
+                    >
+                      <ClearFilterIcon fontSize="small" />
+                    </IconButton>
+                  </span>
+                </Tooltip>
+              </InputAdornment>
+            )}
+          />
+        </Box>
+        <List
+          sx={{
+            paddingTop: 0,
+          }}
+          dense={true}
+          component={ListComponent<T>}
+          options={filteredOptions}
+          getOptionKey={getOptionKey}
+          getOptionLabel={getOptionLabel}
+          getOptionIcon={getOptionIcon}
+          value={value}
+          onOptionClick={( option ) =>
+          {
+            if( value.includes( option ) )
+            {
+              onChange( value.filter( ( o ) => o !== option ) );
+            }
+            else
+            {
+              onChange( [ ...value, option ] );
+            }
+          }}
+        />
+      </Popover>
     </>
   );
 }
