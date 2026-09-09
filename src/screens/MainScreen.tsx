@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, styled, Typography } from '@mui/material';
+import { Alert, AlertTitle, Box, Button, CircularProgress, styled, Typography } from '@mui/material';
 import GlazeIcon from '@mui/icons-material/InvertColors';
 import TemperatureIcon from '@mui/icons-material/Thermostat';
 import QrCodeIcon from '@mui/icons-material/QrCode2';
@@ -163,6 +163,82 @@ export const MainScreen: React.FC = () =>
     history.replaceState( null, '', newUrl );
   }, [ location, saveAvailableGlazeIds ] );
 
+  let combosContent: NonNullable<React.ReactNode>;
+  if( glazesData.loading )
+  {
+    combosContent = (
+      <Box
+        sx={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <CircularProgress
+          variant="indeterminate"
+          size={80}
+        />
+      </Box>
+    );
+  }
+  else if( glazesData.error )
+  {
+    combosContent = (
+      <Alert variant="outlined" severity="error">
+        <AlertTitle>Failed to load glaze combinations data!</AlertTitle>
+        {glazesData.error.message}
+      </Alert>
+    );
+  }
+  else if( availableGlazes.length < 2 )
+  {
+    combosContent = (
+      <InfoText>Select at least two glazes to find combinations.</InfoText>
+    );
+  }
+  else if( filteredCombos.length === 0 )
+  {
+    combosContent = (
+      <InfoText>No glaze combinations found for selected glazes, firing temperatures, and filters.</InfoText>
+    );
+  }
+  else
+  {
+    combosContent = (
+      <GlazeComboGrid
+        glazeCombos={filteredCombos}
+        glazes={glazesData.data?.glazes ?? EMPTY}
+        favoriteComboIds={favoriteComboIds}
+        onFavoriteChange={( combo, favorite ) =>
+        {
+          if( favorite )
+          {
+            saveFavoriteComboIds( [ ...favoriteComboIds, combo.id ] );
+          }
+          else
+          {
+            saveFavoriteComboIds( favoriteComboIds.filter( ( c ) => c !== combo.id ) );
+          }
+        }}
+        markedComboIds={markedComboIds}
+        onMarkedChange={( combo, marked ) =>
+        {
+          if( marked )
+          {
+            saveMarkedComboIds( [ ...markedComboIds, combo.id ] );
+          }
+          else
+          {
+            saveMarkedComboIds( markedComboIds.filter( ( c ) => c !== combo.id ) );
+          }
+        }}
+      />
+    );
+  }
+
   return (
     <Box
       sx={{
@@ -266,46 +342,7 @@ export const MainScreen: React.FC = () =>
           flexShrink: 0,
         }}
       >
-        {availableGlazes.length < 2
-          ? (
-              <InfoText>Select at least two glazes to find combinations</InfoText>
-            )
-          : (
-              filteredCombos.length === 0
-                ? (
-                    <InfoText>No glaze combinations found for selected glazes/firing temperatures</InfoText>
-                  )
-                : (
-                    <GlazeComboGrid
-                      glazeCombos={filteredCombos}
-                      glazes={glazesData.data?.glazes ?? EMPTY}
-                      favoriteComboIds={favoriteComboIds}
-                      onFavoriteChange={( combo, favorite ) =>
-                      {
-                        if( favorite )
-                        {
-                          saveFavoriteComboIds( [ ...favoriteComboIds, combo.id ] );
-                        }
-                        else
-                        {
-                          saveFavoriteComboIds( favoriteComboIds.filter( ( c ) => c !== combo.id ) );
-                        }
-                      }}
-                      markedComboIds={markedComboIds}
-                      onMarkedChange={( combo, marked ) =>
-                      {
-                        if( marked )
-                        {
-                          saveMarkedComboIds( [ ...markedComboIds, combo.id ] );
-                        }
-                        else
-                        {
-                          saveMarkedComboIds( markedComboIds.filter( ( c ) => c !== combo.id ) );
-                        }
-                      }}
-                    />
-                  )
-            )}
+        {combosContent}
       </Box>
       <Button
         sx={{
