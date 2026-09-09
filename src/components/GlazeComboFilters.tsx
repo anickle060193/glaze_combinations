@@ -70,6 +70,9 @@ export const GlazeComboFilters: React.FC<Props> = ( {
         open={!!anchorEl}
         anchorEl={anchorEl}
         placement="bottom-end"
+        sx={( theme ) => ( {
+          zIndex: theme.zIndex.modal,
+        } )}
       >
         <ClickAwayListener
           mouseEvent="onMouseDown"
