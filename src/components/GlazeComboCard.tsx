@@ -6,25 +6,27 @@ import FavoriteOutlineIcon from '@mui/icons-material/StarBorder';
 
 import { ExternalLink } from './ExternalLink';
 import { GlazeLink } from './GlazeLink';
+import { FancyImage } from './FancyImage';
 
 import type { Glaze, GlazeCombo } from '../utilities/glaze_types';
 import { mergeSx } from '../utilities/mergeSx';
 
-const ComboImage = styled( 'img' )( () => ( {
+const ComboImage = styled( FancyImage )( () => ( {
   display: 'block',
   width: '100%',
+  height: '100%',
   aspectRatio: 1,
 } ) );
 
-const ComboGlazeImage = styled( 'img' )( () => ( {
+const ComboGlazeImage = styled( FancyImage )( () => ( {
   display: 'block',
   width: '100%',
-  flex: 1,
+  height: '100%',
 } ) );
 
 const FireTempText = styled( 'div' )( ( { theme } ) => ( {
   position: 'absolute',
-  top: 0,
+  bottom: 0,
   left: 0,
   margin: theme.spacing( 0.5 ),
   color: '#000',
@@ -77,6 +79,9 @@ export const GlazeComboCard: React.FC<Props> = ( {
           }}
         >
           <ExternalLink
+            sx={{
+              display: 'block',
+            }}
             href={combo.imageUrls[ 0 ]}
           >
             <ComboImage
@@ -99,6 +104,10 @@ export const GlazeComboCard: React.FC<Props> = ( {
           {comboGlazes.map( ( g ) => g && (
             <GlazeLink
               key={g.id}
+              sx={{
+                display: 'block',
+                flex: 1,
+              }}
               glaze={g}
             >
               <ComboGlazeImage
