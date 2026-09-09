@@ -9,7 +9,7 @@ import {
   ToggleButtonGroup,
   Tooltip,
 } from '@mui/material';
-import type { SvgIconComponent } from '@mui/icons-material';
+import { type SvgIconComponent } from '@mui/icons-material';
 import FilterIcon from '@mui/icons-material/FilterAlt';
 import FavoriteIcon from '@mui/icons-material/Star';
 import NonFavoriteIcon from '@mui/icons-material/StarBorder';
@@ -59,7 +59,10 @@ export const GlazeComboFilters: React.FC<Props> = ( {
     <>
       <IconButton
         color="primary"
-        onClick={( e ) => setAnchorEl( e.currentTarget )}
+        onClick={( e ) =>
+        {
+          setAnchorEl( anchorEl ? null : e.currentTarget );
+        }}
       >
         <FilterIcon />
       </IconButton>
@@ -71,7 +74,16 @@ export const GlazeComboFilters: React.FC<Props> = ( {
         <ClickAwayListener
           mouseEvent="onMouseDown"
           touchEvent="onTouchStart"
-          onClickAway={() => setAnchorEl( null )}
+          onClickAway={( e ) =>
+          {
+            if( e.target instanceof Node
+              && anchorEl?.contains( e.target ) )
+            {
+              return;
+            }
+
+            setAnchorEl( null );
+          }}
         >
           <Paper
             sx={{
