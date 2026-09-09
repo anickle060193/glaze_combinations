@@ -121,6 +121,7 @@ export const GlazeComboCard: React.FC<Props> = ( {
       <Box
         sx={{
           paddingY: 1,
+          paddingX: 0.75,
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
