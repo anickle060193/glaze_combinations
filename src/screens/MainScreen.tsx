@@ -9,7 +9,7 @@ import { FilterButton } from '../components/FilterButton';
 import { GlazeComboFilters, type FavoritesFilter, type MarkedFilter } from '../components/GlazeComboFilters';
 import { GlazeComboGrid } from '../components/GlazeComboGrid';
 import { AttributionFooter } from '../components/AttributionFooter';
-import { QrCodeDialog } from '../components/QrCodeDialog';
+import { ShareDialog } from '../components/ShareDialog';
 
 import { useAsyncData } from '../hooks/useAsyncData';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -364,7 +364,7 @@ export const MainScreen: React.FC = () =>
       >
         Share Available Glazes
       </Button>
-      <QrCodeDialog
+      <ShareDialog
         open={shareAvailableGlazesOpen}
         onClose={() => setShareAvailableGlazesOpen( false )}
         content={importAvailableGlazesUrl}
