@@ -87,6 +87,11 @@ export const ShareDialog: React.FC<Props> = ( { open, onClose, content } ) =>
     };
   }, [ open, content, theme.palette.secondary.dark ] );
 
+  const supportsClipboard = (
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    typeof window.navigator?.clipboard?.writeText === 'function'
+  );
+
   return (
     <>
       <Dialog
@@ -127,27 +132,29 @@ export const ShareDialog: React.FC<Props> = ( { open, onClose, content } ) =>
                   <SquareImage src={dataUrl} />
                 )}
           </Box>
-          <Button
-            variant="outlined"
-            fullWidth={true}
-            onClick={async () =>
-            {
-              try
+          {supportsClipboard && (
+            <Button
+              variant="outlined"
+              fullWidth={true}
+              onClick={async () =>
               {
-                await navigator.clipboard.writeText( content );
-                setCopyResult( { severity: 'success', text: 'Copied link!' } );
-                setCopyResultOpen( true );
-              }
-              catch( e )
-              {
-                console.warn( 'Failed to copy share content to clipboard:', e );
-                setCopyResult( { severity: 'error', text: 'Failed to copy link' } );
-                setCopyResultOpen( true );
-              }
-            }}
-          >
-            Copy Link
-          </Button>
+                try
+                {
+                  await navigator.clipboard.writeText( content );
+                  setCopyResult( { severity: 'success', text: 'Copied link!' } );
+                  setCopyResultOpen( true );
+                }
+                catch( e )
+                {
+                  console.warn( 'Failed to copy share content to clipboard:', e );
+                  setCopyResult( { severity: 'error', text: 'Failed to copy link' } );
+                  setCopyResultOpen( true );
+                }
+              }}
+            >
+              Copy Link
+            </Button>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Done</Button>
