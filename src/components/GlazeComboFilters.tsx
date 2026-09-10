@@ -124,7 +124,6 @@ export const GlazeComboFilters: React.FC<Props> = ( {
               {Object.values( FAVORITE_FILTER_OPTIONS ).map( ( { value, title, icon: Icon } ) => (
                 <Tooltip
                   key={value}
-                  disableInteractive={true}
                   title={title}
                 >
                   <ToggleButton value={value}>
@@ -143,7 +142,6 @@ export const GlazeComboFilters: React.FC<Props> = ( {
               {Object.values( MARKED_FILTER_OPTIONS ).map( ( { value, title, icon: Icon } ) => (
                 <Tooltip
                   key={value}
-                  disableInteractive={true}
                   title={title}
                 >
                   <ToggleButton value={value}>

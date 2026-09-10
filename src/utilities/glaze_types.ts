@@ -19,3 +19,5 @@ export interface GlazeData
   combos: GlazeCombo[];
   fireTemps: string[];
 }
+
+export type GlazeOrder = 'under' | 'over';

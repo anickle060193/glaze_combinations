@@ -24,6 +24,13 @@ const theme = createTheme( {
       },
     },
   },
+  components: {
+    MuiTooltip: {
+      defaultProps: {
+        disableInteractive: true,
+      },
+    },
+  },
 } );
 
 export const App: React.FC = () =>

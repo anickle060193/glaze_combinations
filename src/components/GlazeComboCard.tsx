@@ -8,7 +8,7 @@ import { ExternalLink } from './ExternalLink';
 import { GlazeLink } from './GlazeLink';
 import { FancyImage } from './FancyImage';
 
-import type { Glaze, GlazeCombo } from '../utilities/glaze_types';
+import type { Glaze, GlazeCombo, GlazeOrder } from '../utilities/glaze_types';
 import { mergeSx } from '../utilities/mergeSx';
 
 const ComboImage = styled( FancyImage )( () => ( {
@@ -41,6 +41,7 @@ interface Props extends CardProps
 {
   combo: GlazeCombo;
   glazes: readonly Glaze[];
+  glazeOrder: GlazeOrder;
   favorite: boolean;
   onFavoriteChange: ( favorite: boolean ) => void;
   marked: boolean;
@@ -48,11 +49,20 @@ interface Props extends CardProps
 }
 
 export const GlazeComboCard: React.FC<Props> = ( {
-  combo, glazes, favorite, onFavoriteChange, marked, onMarkedChange,
+  combo, glazes, glazeOrder, favorite, onFavoriteChange, marked, onMarkedChange,
   ...cardProps
 } ) =>
 {
-  const comboGlazes = combo.glazeIds.map( ( gid ) => glazes.find( ( g ) => g.id === gid ) );
+  const comboGlazes = combo.glazeIds
+    .map( ( gid ) => glazes.find( ( g ) => g.id === gid ) );
+
+  let glazeOrderText = 'over';
+
+  if( glazeOrder === 'under' )
+  {
+    comboGlazes.reverse();
+    glazeOrderText = 'under';
+  }
 
   return (
     <Card
@@ -165,7 +175,7 @@ export const GlazeComboCard: React.FC<Props> = ( {
                   variant="subtitle2"
                   color="textSecondary"
                 >
-                  {i === 1 ? 'on' : 'over'}
+                  {glazeOrderText}
                 </Typography>
               )}
             </React.Fragment>

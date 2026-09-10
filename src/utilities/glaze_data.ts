@@ -1,4 +1,4 @@
-import type { Glaze, GlazeData } from './glaze_types';
+import type { Glaze, GlazeCombo, GlazeData, GlazeOrder } from './glaze_types';
 
 import glazesJsonUrl from '../data/glazes_data.json?url';
 
@@ -35,4 +35,35 @@ export function getGlazeImageUrl( glaze: Glaze, fireTemps?: string[] ): string
   }
 
   return preferredImageUrl ?? Object.values<string | undefined>( glaze.imageUrls )[ 0 ] ?? '';
+}
+
+const GLAZE_ID_COLLATOR = new Intl.Collator( undefined, {
+  sensitivity: 'accent',
+  numeric: true,
+  ignorePunctuation: true,
+  usage: 'sort',
+} );
+
+export function compareGlazeCombos( a: GlazeCombo, b: GlazeCombo, order: GlazeOrder ): number
+{
+  const aGlazeIds = a.glazeIds.slice();
+  const bGlazeIds = b.glazeIds.slice();
+
+  if( order === 'under' )
+  {
+    aGlazeIds.reverse();
+    bGlazeIds.reverse();
+  }
+
+  const length = Math.min( aGlazeIds.length, bGlazeIds.length );
+  for( let i = 0; i < length; i++ )
+  {
+    const cmp = GLAZE_ID_COLLATOR.compare( aGlazeIds[ i ], bGlazeIds[ i ] );
+    if( cmp !== 0 )
+    {
+      return cmp;
+    }
+  }
+
+  return aGlazeIds.length - bGlazeIds.length;
 }

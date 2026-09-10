@@ -3,12 +3,13 @@ import { Grid } from '@mui/material';
 
 import { GlazeComboCard } from './GlazeComboCard';
 
-import type { Glaze, GlazeCombo } from '../utilities/glaze_types';
+import type { Glaze, GlazeCombo, GlazeOrder } from '../utilities/glaze_types';
 
 interface Props
 {
   glazeCombos: readonly GlazeCombo[];
   glazes: readonly Glaze[];
+  glazeOrder: GlazeOrder;
   favoriteComboIds: readonly string[];
   onFavoriteChange: ( combo: GlazeCombo, favorite: boolean ) => void;
   markedComboIds: readonly string[];
@@ -16,7 +17,7 @@ interface Props
 }
 
 export const GlazeComboGrid: React.FC<Props> = ( {
-  glazeCombos, glazes,
+  glazeCombos, glazes, glazeOrder,
   favoriteComboIds, onFavoriteChange,
   markedComboIds, onMarkedChange,
 } ) =>
@@ -35,6 +36,7 @@ export const GlazeComboGrid: React.FC<Props> = ( {
           component={GlazeComboCard}
           combo={combo}
           glazes={glazes}
+          glazeOrder={glazeOrder}
           favorite={favoriteComboIds.includes( combo.id )}
           onFavoriteChange={( favorite: boolean ) => onFavoriteChange( combo, favorite )}
           marked={markedComboIds.includes( combo.id )}

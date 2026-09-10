@@ -1,5 +1,16 @@
 import React from 'react';
-import { Alert, AlertTitle, Box, Button, CircularProgress, Grid, InputAdornment, OutlinedInput, styled, Typography } from '@mui/material';
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  InputAdornment,
+  OutlinedInput,
+  styled,
+  Typography,
+} from '@mui/material';
 import GlazeIcon from '@mui/icons-material/InvertColors';
 import TemperatureIcon from '@mui/icons-material/Thermostat';
 import QrCodeIcon from '@mui/icons-material/QrCode2';
@@ -16,7 +27,9 @@ import { useAsyncData } from '../hooks/useAsyncData';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useLocation } from '../hooks/useLocation';
 
-import { fetchGlazesData, getGlazeImageUrl } from '../utilities/glaze_data';
+import { compareGlazeCombos, fetchGlazesData, getGlazeImageUrl } from '../utilities/glaze_data';
+import type { GlazeOrder } from '../utilities/glaze_types';
+import { GlazeOrderToggle } from '../components/GlazeOrderToggle';
 
 const IMPORT_AVAILABLE_GLAZE_IDS_PARAM = 'import-available-glazes';
 
@@ -67,78 +80,83 @@ export const MainScreen: React.FC = () =>
   const [ favoritesFilter, setFavoritesFilter ] = React.useState<FavoritesFilter>( 'all' );
   const [ markedFilter, setMarkedFilter ] = React.useState<MarkedFilter>( 'all' );
 
+  const [ glazeOrder, saveGlazeOrder ] = useLocalStorage<GlazeOrder>( 'glaze-order', 'over' );
+
   const glazeSearchTerms = glazeSearchText.trim().toLocaleLowerCase().split( /[^a-zA-Z0-9]+/g );
-  const filteredCombos = glazesData.data?.combos.filter( ( combo ) =>
-  {
-    if( availableGlazes.length > 0 )
+  const filteredCombos = glazesData.data?.combos
+    .filter( ( combo ) =>
     {
-      for( const glazeId of combo.glazeIds )
+      if( availableGlazes.length > 0 )
       {
-        if( !availableGlazes.find( ( g ) => g.id === glazeId ) )
+        for( const glazeId of combo.glazeIds )
+        {
+          if( !availableGlazes.find( ( g ) => g.id === glazeId ) )
+          {
+            return false;
+          }
+        }
+      }
+
+      if( selectedFireTemps.length > 0 )
+      {
+        if( !selectedFireTemps.includes( combo.fireTemp ) )
         {
           return false;
         }
       }
-    }
 
-    if( selectedFireTemps.length > 0 )
-    {
-      if( !selectedFireTemps.includes( combo.fireTemp ) )
+      if( glazeSearchTerms.length > 0 )
       {
-        return false;
+        const glazeNames = glazesData.data?.glazes
+          .filter( ( g ) => combo.glazeIds.includes( g.id ) )
+          .map( ( g ) => g.name )
+          .join( ' ' )
+          .toLocaleLowerCase();
+        if( glazeNames )
+        {
+          if( !glazeSearchTerms.every( ( t ) => glazeNames.includes( t ) ) )
+          {
+            return false;
+          }
+        }
       }
-    }
 
-    if( glazeSearchTerms.length > 0 )
-    {
-      const glazeNames = glazesData.data?.glazes
-        .filter( ( g ) => combo.glazeIds.includes( g.id ) )
-        .map( ( g ) => g.name )
-        .join( ' ' )
-        .toLocaleLowerCase();
-      if( glazeNames )
+      const favorite = favoriteComboIds.includes( combo.id );
+      if( favoritesFilter === 'favorites' )
       {
-        if( !glazeSearchTerms.every( ( t ) => glazeNames.includes( t ) ) )
+        if( !favorite )
         {
           return false;
         }
       }
-    }
+      else if( favoritesFilter === 'nonfavorites' )
+      {
+        if( favorite )
+        {
+          return false;
+        }
+      }
 
-    const favorite = favoriteComboIds.includes( combo.id );
-    if( favoritesFilter === 'favorites' )
-    {
-      if( !favorite )
+      const marked = markedComboIds.includes( combo.id );
+      if( markedFilter === 'marked' )
       {
-        return false;
+        if( !marked )
+        {
+          return false;
+        }
       }
-    }
-    else if( favoritesFilter === 'nonfavorites' )
-    {
-      if( favorite )
+      else if( markedFilter === 'nonmarked' )
       {
-        return false;
+        if( marked )
+        {
+          return false;
+        }
       }
-    }
 
-    const marked = markedComboIds.includes( combo.id );
-    if( markedFilter === 'marked' )
-    {
-      if( !marked )
-      {
-        return false;
-      }
-    }
-    else if( markedFilter === 'nonmarked' )
-    {
-      if( marked )
-      {
-        return false;
-      }
-    }
-
-    return true;
-  } ) ?? EMPTY;
+      return true;
+    } )
+    .sort( ( a, b ) => compareGlazeCombos( a, b, glazeOrder ) )
+    ?? EMPTY;
 
   const location = useLocation();
 
@@ -219,6 +237,7 @@ export const MainScreen: React.FC = () =>
       <GlazeComboGrid
         glazeCombos={filteredCombos}
         glazes={glazesData.data?.glazes ?? EMPTY}
+        glazeOrder={glazeOrder}
         favoriteComboIds={favoriteComboIds}
         onFavoriteChange={( combo, favorite ) =>
         {
@@ -332,6 +351,7 @@ export const MainScreen: React.FC = () =>
             sm: 4,
           }}
           container={true}
+          spacing={0}
           sx={{
             alignItems: 'stretch',
           }}
@@ -339,6 +359,7 @@ export const MainScreen: React.FC = () =>
           <OutlinedInput
             sx={{
               flex: 1,
+              marginRight: 1,
             }}
             size="small"
             color="primary"
@@ -358,6 +379,13 @@ export const MainScreen: React.FC = () =>
             )}
             value={glazeSearchText}
             onChange={( e ) => setGlazeSearchText( e.currentTarget.value )}
+          />
+          <GlazeOrderToggle
+            sx={{
+              alignSelf: 'center',
+            }}
+            glazeOrder={glazeOrder}
+            onChange={saveGlazeOrder}
           />
           <GlazeComboFilters
             sx={{
