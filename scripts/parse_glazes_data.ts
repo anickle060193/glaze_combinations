@@ -90,16 +90,30 @@ for( const { label, fireTemp: rawFireTemp, comboImageUrl, glazeImageUrls } of ra
       glazeIds: comboGlazeIds,
       imageUrls: [],
     };
-    combo.imageUrls.push( comboImageUrl );
+    if( !combo.imageUrls.includes( comboImageUrl ) )
+    {
+      combo.imageUrls.push( comboImageUrl );
+    }
   }
 }
 
+const collator = new Intl.Collator( undefined, {
+  numeric: true,
+  usage: 'sort',
+  sensitivity: 'accent',
+} );
+
 const sortedGlazes = Object.values( glazeMapping )
-  .sort( ( a, b ) => a.id.localeCompare( b.id, undefined, { numeric: true, usage: 'sort' } ) );
+  .sort( ( a, b ) => collator.compare( a.id, b.id ) );
 
 const sortedCombos = Object.entries( comboMapping )
-  .sort( ( [ a ], [ b ] ) => a.localeCompare( b, undefined, { numeric: true, usage: 'sort' } ) )
+  .sort( ( [ a ], [ b ] ) => collator.compare( a, b ) )
   .map( ( [ , c ] ) => c );
+
+for( const combo of sortedCombos )
+{
+  combo.imageUrls.sort( ( a, b ) => -collator.compare( a, b ) );
+}
 
 const sortedFireTemps = Array.from( fireTemps )
   .sort( ( a, b ) => a.localeCompare( b, undefined, { numeric: true, usage: 'sort' } ) );

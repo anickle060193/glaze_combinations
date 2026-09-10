@@ -53,6 +53,8 @@ export const GlazeComboCard: React.FC<Props> = ( {
   ...cardProps
 } ) =>
 {
+  const comboImageUrl = combo.imageUrls[ 0 ];
+
   const comboGlazes = combo.glazeIds
     .map( ( gid ) => glazes.find( ( g ) => g.id === gid ) );
 
@@ -92,10 +94,10 @@ export const GlazeComboCard: React.FC<Props> = ( {
             sx={{
               display: 'block',
             }}
-            href={combo.imageUrls[ 0 ]}
+            href={comboImageUrl}
           >
             <ComboImage
-              src={combo.imageUrls[ 0 ]}
+              src={comboImageUrl}
               loading="lazy"
               alt={comboGlazes.map( ( g ) => g?.name ).join( ' over ' )}
             />
