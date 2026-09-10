@@ -2,8 +2,6 @@ import React from 'react';
 import {
   Box,
   Button,
-  IconButton,
-  InputAdornment,
   List,
   ListItem,
   ListItemButton,
@@ -11,15 +9,15 @@ import {
   ListItemText,
   OutlinedInput,
   Popover,
-  Tooltip,
+  Typography,
   type SxProps,
   type Theme,
 } from '@mui/material';
 import DropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ClearFilterIcon from '@mui/icons-material/FilterAltOff';
 import { List as VirtualizedList, type RowComponentProps } from 'react-window';
 
 import { mergeSx } from '../utilities/mergeSx';
+import { ClearInputAdornment } from './ClearInputAdornment';
 
 interface Props<T>
 {
@@ -29,6 +27,7 @@ interface Props<T>
   startIcon?: React.ReactNode;
   showAll?: boolean;
   placeholder: string;
+  noOptionsText?: React.ReactNode;
   options: readonly T[];
   value: readonly T[];
   onChange: ( value: T[] ) => void;
@@ -44,6 +43,7 @@ export function FilterButton<T>( {
   startIcon,
   showAll = true,
   placeholder,
+  noOptionsText,
   options,
   value,
   onChange,
@@ -114,12 +114,18 @@ export function FilterButton<T>( {
         marginThreshold={0}
         slotProps={{
           paper: {
-            sx: {
+            sx: ( theme ) => ( {
               marginTop: 1,
-              minWidth: popupMinWidth,
+              [ theme.breakpoints.down( 'sm' ) ]: {
+                width: `calc( 100% - ${theme.spacing( 1 )} )`,
+              },
+              maxWidth: '100%',
               maxHeight: 'min( 600px, 90vh )',
               display: 'flex',
               flexDirection: 'column',
+            } ),
+            style: {
+              minWidth: `${Math.max( 300, popupMinWidth )}px`,
             },
           },
         }}
@@ -145,51 +151,51 @@ export function FilterButton<T>( {
               }
             }}
             endAdornment={(
-              <InputAdornment position="end">
-                <Tooltip title="Clear filter">
-                  <span>
-                    <IconButton
-                      edge="end"
-                      size="small"
-                      disabled={value.length === 0}
-                      onClick={( e ) =>
-                      {
-                        e.preventDefault();
-
-                        onChange( [] );
-                      }}
-                    >
-                      <ClearFilterIcon fontSize="small" />
-                    </IconButton>
-                  </span>
-                </Tooltip>
-              </InputAdornment>
+              <ClearInputAdornment
+                size="small"
+                onClear={() => setInputValue( '' )}
+              />
             )}
           />
         </Box>
-        <List
-          sx={{
-            paddingTop: 0,
-          }}
-          dense={true}
-          component={ListComponent<T>}
-          options={filteredOptions}
-          getOptionKey={getOptionKey}
-          getOptionLabel={getOptionLabel}
-          getOptionIcon={getOptionIcon}
-          value={value}
-          onOptionClick={( option ) =>
-          {
-            if( value.includes( option ) )
-            {
-              onChange( value.filter( ( o ) => o !== option ) );
-            }
-            else
-            {
-              onChange( [ ...value, option ] );
-            }
-          }}
-        />
+        {filteredOptions.length <= 0
+          ? (
+              <Typography
+                sx={{
+                  padding: 1,
+                  paddingTop: 0.5,
+                }}
+                variant="body2"
+                color="textSecondary"
+              >
+                {noOptionsText}
+              </Typography>
+            )
+          : (
+              <List
+                sx={{
+                  paddingTop: 0,
+                }}
+                dense={true}
+                component={ListComponent<T>}
+                options={filteredOptions}
+                getOptionKey={getOptionKey}
+                getOptionLabel={getOptionLabel}
+                getOptionIcon={getOptionIcon}
+                value={value}
+                onOptionClick={( option ) =>
+                {
+                  if( value.includes( option ) )
+                  {
+                    onChange( value.filter( ( o ) => o !== option ) );
+                  }
+                  else
+                  {
+                    onChange( [ ...value, option ] );
+                  }
+                }}
+              />
+            )}
       </Popover>
     </>
   );
@@ -259,6 +265,7 @@ function RowComponent<T>( {
     >
       <ListItemButton
         selected={selected}
+        onMouseDown={( e ) => e.preventDefault()}
         onClick={() => onOptionClick( option )}
       >
         {!!getOptionIcon && (

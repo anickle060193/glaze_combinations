@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, AlertTitle, Box, Button, CircularProgress, Grid, InputAdornment, styled, Typography } from '@mui/material';
+import { Alert, AlertTitle, Box, Button, CircularProgress, Grid, InputAdornment, OutlinedInput, styled, Typography } from '@mui/material';
 import GlazeIcon from '@mui/icons-material/InvertColors';
 import TemperatureIcon from '@mui/icons-material/Thermostat';
 import QrCodeIcon from '@mui/icons-material/QrCode2';
@@ -10,13 +10,13 @@ import { GlazeComboFilters, type FavoritesFilter, type MarkedFilter } from '../c
 import { GlazeComboGrid } from '../components/GlazeComboGrid';
 import { AttributionFooter } from '../components/AttributionFooter';
 import { ShareDialog } from '../components/ShareDialog';
+import { ClearInputAdornment } from '../components/ClearInputAdornment';
 
 import { useAsyncData } from '../hooks/useAsyncData';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useLocation } from '../hooks/useLocation';
 
 import { fetchGlazesData, getGlazeImageUrl } from '../utilities/glaze_data';
-import { ClearableInput } from '../components/ClearableInput';
 
 const IMPORT_AVAILABLE_GLAZE_IDS_PARAM = 'import-available-glazes';
 
@@ -288,6 +288,7 @@ export const MainScreen: React.FC = () =>
             showAll={false}
             placeholder="Filter glazes"
             startIcon={<GlazeIcon />}
+            noOptionsText="No matching glazes"
             options={glazesData.data?.glazes ?? EMPTY}
             value={availableGlazes}
             onChange={( value ) => saveAvailableGlazeIds( value.map( ( g ) => g.id ) )}
@@ -317,6 +318,7 @@ export const MainScreen: React.FC = () =>
             fullWidth={true}
             placeholder="Filter firing temps"
             startIcon={<TemperatureIcon />}
+            noOptionsText="No matching firing temperatures"
             options={glazesData.data?.fireTemps ?? EMPTY}
             value={selectedFireTemps}
             onChange={( value ) => saveSelectedFireTempIds( value )}
@@ -334,7 +336,7 @@ export const MainScreen: React.FC = () =>
             alignItems: 'stretch',
           }}
         >
-          <ClearableInput
+          <OutlinedInput
             sx={{
               flex: 1,
             }}
@@ -347,6 +349,12 @@ export const MainScreen: React.FC = () =>
               <InputAdornment position="start">
                 <SearchIcon fontSize="small" />
               </InputAdornment>
+            )}
+            endAdornment={(
+              <ClearInputAdornment
+                size="small"
+                onClear={() => setGlazeSearchText( '' )}
+              />
             )}
             value={glazeSearchText}
             onChange={( e ) => setGlazeSearchText( e.currentTarget.value )}
