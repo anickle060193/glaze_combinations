@@ -1,8 +1,9 @@
 import React from 'react';
-import { Alert, AlertTitle, Box, Button, CircularProgress, styled, Typography } from '@mui/material';
+import { Alert, AlertTitle, Box, Button, CircularProgress, InputAdornment, styled, Typography } from '@mui/material';
 import GlazeIcon from '@mui/icons-material/InvertColors';
 import TemperatureIcon from '@mui/icons-material/Thermostat';
 import QrCodeIcon from '@mui/icons-material/QrCode2';
+import SearchIcon from '@mui/icons-material/Search';
 
 import { FilterButton } from '../components/FilterButton';
 import { GlazeComboFilters, type FavoritesFilter, type MarkedFilter } from '../components/GlazeComboFilters';
@@ -15,6 +16,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useLocation } from '../hooks/useLocation';
 
 import { fetchGlazesData, getGlazeImageUrl } from '../utilities/glaze_data';
+import { ClearableInput } from '../components/ClearableInput';
 
 const IMPORT_AVAILABLE_GLAZE_IDS_PARAM = 'import-available-glazes';
 
@@ -45,6 +47,7 @@ const InfoText: React.FC<{ children?: React.ReactNode }> = ( { children } ) =>
     </Box>
   );
 };
+
 const EMPTY: readonly [] = [];
 
 export const MainScreen: React.FC = () =>
@@ -53,11 +56,10 @@ export const MainScreen: React.FC = () =>
 
   const [ availableGlazeIds, saveAvailableGlazeIds ] = useLocalStorage<string[]>( 'selected-available-glazes', EMPTY );
   const [ selectedFireTempIds, saveSelectedFireTempIds ] = useLocalStorage<string[]>( 'selected-fire-temps', EMPTY );
-  const [ requiredGlazeIds, setRequiredGlazeIds ] = React.useState<string[]>( [] );
+  const [ glazeSearchText, setGlazeSearchText ] = React.useState( '' );
 
   const availableGlazes = glazesData.data?.glazes.filter( ( g ) => availableGlazeIds.includes( g.id ) ) ?? EMPTY;
   const selectedFireTemps = glazesData.data?.fireTemps.filter( ( t ) => selectedFireTempIds.includes( t ) ) ?? selectedFireTempIds;
-  const requiredGlazes = glazesData.data?.glazes.filter( ( g ) => requiredGlazeIds.includes( g.id ) ) ?? EMPTY;
 
   const [ favoriteComboIds, saveFavoriteComboIds ] = useLocalStorage<string[]>( 'favorite-combos', EMPTY );
   const [ markedComboIds, saveMarkedComboIds ] = useLocalStorage<string[]>( 'marked-combos', EMPTY );
@@ -65,6 +67,7 @@ export const MainScreen: React.FC = () =>
   const [ favoritesFilter, setFavoritesFilter ] = React.useState<FavoritesFilter>( 'all' );
   const [ markedFilter, setMarkedFilter ] = React.useState<MarkedFilter>( 'all' );
 
+  const glazeSearchTerms = glazeSearchText.trim().toLocaleLowerCase().split( /[^a-zA-Z0-9]+/g );
   const filteredCombos = glazesData.data?.combos.filter( ( combo ) =>
   {
     if( availableGlazes.length > 0 )
@@ -78,22 +81,27 @@ export const MainScreen: React.FC = () =>
       }
     }
 
-    if( requiredGlazes.length > 0 )
-    {
-      for( const requiredGlaze of requiredGlazes )
-      {
-        if( !combo.glazeIds.includes( requiredGlaze.id ) )
-        {
-          return false;
-        }
-      }
-    }
-
     if( selectedFireTemps.length > 0 )
     {
       if( !selectedFireTemps.includes( combo.fireTemp ) )
       {
         return false;
+      }
+    }
+
+    if( glazeSearchTerms.length > 0 )
+    {
+      const glazeNames = glazesData.data?.glazes
+        .filter( ( g ) => combo.glazeIds.includes( g.id ) )
+        .map( ( g ) => g.name )
+        .join( ' ' )
+        .toLocaleLowerCase();
+      if( glazeNames )
+      {
+        if( !glazeSearchTerms.every( ( t ) => glazeNames.includes( t ) ) )
+        {
+          return false;
+        }
       }
     }
 
@@ -305,30 +313,29 @@ export const MainScreen: React.FC = () =>
           getOptionKey={( o ) => o}
           getOptionLabel={( o ) => `Cone ${o}`}
         />
-        <FilterButton
+        <ClearableInput
           sx={{
             flex: 1,
             minWidth: 275,
             maxWidth: '100%',
           }}
-          label="Select Required Glazes"
-          showAll={false}
-          placeholder="Filter required glazes"
-          startIcon={<GlazeIcon />}
-          options={availableGlazes}
-          value={requiredGlazes}
-          onChange={( value ) => setRequiredGlazeIds( value.map( ( g ) => g.id ) )}
-          getOptionKey={( o ) => o.id}
-          getOptionLabel={( o ) => o.name}
-          getOptionIcon={( o ) => (
-            <ListImage
-              loading="lazy"
-              src={getGlazeImageUrl( o, selectedFireTemps )}
-              alt={o.name}
-            />
+          size="small"
+          color="primary"
+          notched={false}
+          label={false}
+          placeholder="Search..."
+          startAdornment={(
+            <InputAdornment position="start">
+              <SearchIcon fontSize="small" />
+            </InputAdornment>
           )}
+          value={glazeSearchText}
+          onChange={( e ) => setGlazeSearchText( e.currentTarget.value )}
         />
         <GlazeComboFilters
+          sx={{
+            alignSelf: 'center',
+          }}
           favoritesFilter={favoritesFilter}
           onFavoritesFilterChange={setFavoritesFilter}
           markedFilter={markedFilter}

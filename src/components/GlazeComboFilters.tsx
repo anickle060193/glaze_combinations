@@ -8,6 +8,8 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
+  type SxProps,
+  type Theme,
 } from '@mui/material';
 import { type SvgIconComponent } from '@mui/icons-material';
 import FilterIcon from '@mui/icons-material/FilterAlt';
@@ -42,6 +44,7 @@ const MARKED_FILTER_OPTIONS: { [ F in MarkedFilter ]: FilterOption<F> } = {
 
 interface Props
 {
+  sx?: SxProps<Theme>;
   favoritesFilter: FavoritesFilter;
   onFavoritesFilterChange: ( favoritesFilter: FavoritesFilter ) => void;
   markedFilter: MarkedFilter;
@@ -49,6 +52,7 @@ interface Props
 }
 
 export const GlazeComboFilters: React.FC<Props> = ( {
+  sx,
   favoritesFilter, onFavoritesFilterChange,
   markedFilter, onMarkedFilterChange,
 } ) =>
@@ -58,6 +62,7 @@ export const GlazeComboFilters: React.FC<Props> = ( {
   return (
     <>
       <IconButton
+        sx={sx}
         color="primary"
         onClick={( e ) =>
         {
