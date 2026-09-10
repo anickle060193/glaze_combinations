@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, AlertTitle, Box, Button, CircularProgress, InputAdornment, styled, Typography } from '@mui/material';
+import { Alert, AlertTitle, Box, Button, CircularProgress, Grid, InputAdornment, styled, Typography } from '@mui/material';
 import GlazeIcon from '@mui/icons-material/InvertColors';
 import TemperatureIcon from '@mui/icons-material/Thermostat';
 import QrCodeIcon from '@mui/icons-material/QrCode2';
@@ -259,7 +259,7 @@ export const MainScreen: React.FC = () =>
         overflowY: 'scroll',
       }}
     >
-      <Box
+      <Grid
         sx={( theme ) => ( {
           [ theme.breakpoints.up( 'sm' ) ]: {
             position: 'sticky',
@@ -268,80 +268,100 @@ export const MainScreen: React.FC = () =>
           zIndex: 1,
           backgroundColor: 'background.default',
           paddingY: 1,
-          display: 'flex',
-          flexDirection: 'row',
-          flexFlow: 'row',
-          flexWrap: 'wrap',
-          gap: 1,
         } )}
+        container={true}
+        spacing={1}
       >
-        <FilterButton
-          sx={{
-            flex: 1,
-            minWidth: 275,
-            maxWidth: '100%',
+        <Grid
+          size={{
+            xs: 6,
+            sm: 4,
           }}
-          label="Select Available Glazes"
-          showAll={false}
-          placeholder="Filter glazes"
-          startIcon={<GlazeIcon />}
-          options={glazesData.data?.glazes ?? EMPTY}
-          value={availableGlazes}
-          onChange={( value ) => saveAvailableGlazeIds( value.map( ( g ) => g.id ) )}
-          getOptionKey={( o ) => o.id}
-          getOptionLabel={( o ) => o.name}
-          getOptionIcon={( o ) => (
-            <ListImage
-              loading="lazy"
-              src={getGlazeImageUrl( o, selectedFireTemps )}
-              alt={o.name}
-            />
-          )}
-        />
-        <FilterButton
+          container={true}
           sx={{
-            flex: 1,
-            minWidth: 275,
-            maxWidth: '100%',
+            alignItems: 'stretch',
           }}
-          label="Select Firing Temps"
-          placeholder="Filter firing temps"
-          startIcon={<TemperatureIcon />}
-          options={glazesData.data?.fireTemps ?? EMPTY}
-          value={selectedFireTemps}
-          onChange={( value ) => saveSelectedFireTempIds( value )}
-          getOptionKey={( o ) => o}
-          getOptionLabel={( o ) => `Cone ${o}`}
-        />
-        <ClearableInput
+        >
+          <FilterButton
+            label="Glazes"
+            fullWidth={true}
+            showAll={false}
+            placeholder="Filter glazes"
+            startIcon={<GlazeIcon />}
+            options={glazesData.data?.glazes ?? EMPTY}
+            value={availableGlazes}
+            onChange={( value ) => saveAvailableGlazeIds( value.map( ( g ) => g.id ) )}
+            getOptionKey={( o ) => o.id}
+            getOptionLabel={( o ) => o.name}
+            getOptionIcon={( o ) => (
+              <ListImage
+                loading="lazy"
+                src={getGlazeImageUrl( o, selectedFireTemps )}
+                alt={o.name}
+              />
+            )}
+          />
+        </Grid>
+        <Grid
+          size={{
+            xs: 6,
+            sm: 4,
+          }}
+          container={true}
           sx={{
-            flex: 1,
-            minWidth: 275,
-            maxWidth: '100%',
+            alignItems: 'stretch',
           }}
-          size="small"
-          color="primary"
-          notched={false}
-          label={false}
-          placeholder="Search..."
-          startAdornment={(
-            <InputAdornment position="start">
-              <SearchIcon fontSize="small" />
-            </InputAdornment>
-          )}
-          value={glazeSearchText}
-          onChange={( e ) => setGlazeSearchText( e.currentTarget.value )}
-        />
-        <GlazeComboFilters
+        >
+          <FilterButton
+            label="Firing Temps"
+            fullWidth={true}
+            placeholder="Filter firing temps"
+            startIcon={<TemperatureIcon />}
+            options={glazesData.data?.fireTemps ?? EMPTY}
+            value={selectedFireTemps}
+            onChange={( value ) => saveSelectedFireTempIds( value )}
+            getOptionKey={( o ) => o}
+            getOptionLabel={( o ) => `Cone ${o}`}
+          />
+        </Grid>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 4,
+          }}
+          container={true}
           sx={{
-            alignSelf: 'center',
+            alignItems: 'stretch',
           }}
-          favoritesFilter={favoritesFilter}
-          onFavoritesFilterChange={setFavoritesFilter}
-          markedFilter={markedFilter}
-          onMarkedFilterChange={setMarkedFilter}
-        />
-      </Box>
+        >
+          <ClearableInput
+            sx={{
+              flex: 1,
+            }}
+            size="small"
+            color="primary"
+            notched={false}
+            label={false}
+            placeholder="Search..."
+            startAdornment={(
+              <InputAdornment position="start">
+                <SearchIcon fontSize="small" />
+              </InputAdornment>
+            )}
+            value={glazeSearchText}
+            onChange={( e ) => setGlazeSearchText( e.currentTarget.value )}
+          />
+          <GlazeComboFilters
+            sx={{
+              alignSelf: 'center',
+            }}
+            favoritesFilter={favoritesFilter}
+            onFavoritesFilterChange={setFavoritesFilter}
+            markedFilter={markedFilter}
+            onMarkedFilterChange={setMarkedFilter}
+          />
+        </Grid>
+      </Grid>
       <Box
         sx={{
           paddingBottom: 1,

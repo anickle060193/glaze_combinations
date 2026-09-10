@@ -19,10 +19,13 @@ import DropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ClearFilterIcon from '@mui/icons-material/FilterAltOff';
 import { List as VirtualizedList, type RowComponentProps } from 'react-window';
 
+import { mergeSx } from '../utilities/mergeSx';
+
 interface Props<T>
 {
   sx?: SxProps<Theme>;
   label: React.ReactNode;
+  fullWidth?: boolean;
   startIcon?: React.ReactNode;
   showAll?: boolean;
   placeholder: string;
@@ -37,6 +40,7 @@ interface Props<T>
 export function FilterButton<T>( {
   sx,
   label,
+  fullWidth,
   startIcon,
   showAll = true,
   placeholder,
@@ -71,9 +75,12 @@ export function FilterButton<T>( {
   return (
     <>
       <Button
-        sx={sx}
+        sx={mergeSx( sx, {
+          paddingY: 1,
+          whiteSpace: 'nowrap',
+        } )}
         variant="outlined"
-        size="small"
+        fullWidth={fullWidth}
         startIcon={startIcon}
         endIcon={<DropDownIcon />}
         onClick={( e ) =>
