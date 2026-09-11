@@ -18,7 +18,7 @@ export const GlazeOrderToggle: React.FC<Props> = ( { glazeOrder, onChange, ...bu
   return (
     <Tooltip title="Toggle Glaze Order">
       <IconButton
-        color="secondary"
+        color="primary"
         {...buttonProps}
         onClick={() => onChange( glazeOrder === 'over' ? 'under' : 'over' )}
       >
