@@ -164,6 +164,10 @@ export const ShareDialog: React.FC<Props> = ( { open, onClose, content } ) =>
         open={copyResultOpen && !!copyResult}
         autoHideDuration={1500}
         onClose={() => setCopyResultOpen( false )}
+        anchorOrigin={{
+          horizontal: 'center',
+          vertical: 'bottom',
+        }}
       >
         <Alert
           severity={copyResult?.severity}
